@@ -1,10 +1,12 @@
 package main
 
+import "github.com/bwmarrin/discordgo"
+
 type PingPong struct {
 	Name string
 }
 
-func (c PingPong) process(channelID string, args []string) {
+func (c PingPong) process(channelID string, args []string, msg *discordgo.Message) {
 	session.ChannelMessageSend(channelID, "pong")
 }
 
