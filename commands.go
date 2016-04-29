@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"time"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 type Command interface {
-	process(channelID string, args []string)
+	process(channelID string, args []string, msg *discordgo.Message)
 	name() string
 }
 
@@ -17,7 +19,7 @@ func ProcessCommands(cmds []Command) {
 		go func() {
 			for _, command := range cmds {
 				if command.name() == cmd.Cmd {
-					go command.process(cmd.channelID, cmd.args)
+					go command.process(cmd.channelID, cmd.args, cmd.msg)
 					break
 				}
 			}
