@@ -12,6 +12,7 @@ type cmd struct {
 	Cmd       string
 	args      []string
 	channelID string
+	msg       *discordgo.Message
 }
 
 var cmdChan = make(chan *cmd)
@@ -51,6 +52,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			cmdText,
 			args,
 			msg.ChannelID,
+			msg,
 		}
 	}()
 }
