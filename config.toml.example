@@ -1,0 +1,12 @@
+[app]
+	name = "Arcus"
+	version = "0.0.1"
+	author = "AI"
+	owner = "148793367126474752"
+
+[auth]
+	token = ""
+
+[[feeds]]
+	feed_url = "https://rsstestdiscord.wordpress.com/feed/"
+	channel_id = ""
