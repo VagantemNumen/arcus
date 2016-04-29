@@ -1,8 +1,10 @@
 [app]
 	name = "Arcus"
-	version = "0.0.1"
+	version = "0.1.0"
 	author = "AI"
 	owner = "148793367126474752"
+	prefix = "[]"
+	debug = false
 
 [auth]
 	token = ""
