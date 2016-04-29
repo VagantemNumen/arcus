@@ -23,6 +23,7 @@ func ready(s *discordgo.Session, event *discordgo.Ready) {
 	var cmds []Command
 	cmds = append(cmds, ping)
 	cmds = append(cmds, uptime)
+	cmds = append(cmds, stats)
 	go ProcessCommands(cmds)
 }
 
