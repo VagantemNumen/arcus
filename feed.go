@@ -29,7 +29,7 @@ func (fh *FeedHandlers) ProcessChannels(feed *rss.Feed, newchannels []*rss.Chann
 }
 
 func (fh *FeedHandlers) ProcessItems(feed *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
-	fmt.Printf("%d new rad item(s) in %s\n", len(newitems), feed.Url)
+	//fmt.Printf("%d new rad item(s) in %s\n", len(newitems), feed.Url)
 	/*for _, item := range newitems {
 		fmt.Println("Title:", item.Title)
 		for _, link := range item.Links {

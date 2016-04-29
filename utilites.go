@@ -2,10 +2,13 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
+	sf "github.com/VagantemNumen/arcus/discordsnowflake"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -15,7 +18,7 @@ type Uptime struct {
 	Name string
 }
 
-func (c Uptime) process(channelID string, args []string) {
+func (c Uptime) process(channelID string, args []string, msg *discordgo.Message) {
 	res := fmt.Sprintf("```xl\nUptime: %s\n```", getUptime())
 	session.ChannelMessageSend(channelID, res)
 }
@@ -99,7 +102,7 @@ func (c Stats) name() string {
 	return c.Name
 }
 
-func (c Stats) process(channelID string, args []string) {
+func (c Stats) process(channelID string, args []string, msg *discordgo.Message) {
 	var channels []*discordgo.Channel
 	guilds := session.State.Guilds
 	for _, guild := range guilds {
@@ -128,3 +131,40 @@ func getMem() string {
 }
 
 var stats = Stats{Name: "stats"}
+
+// Whoami the struct for []whoami command.
+type Whoami struct {
+	Command
+	Name string
+}
+
+func (c Whoami) name() string {
+	return c.Name
+}
+
+func (c Whoami) process(channelID string, args []string, msg *discordgo.Message) {
+	var ts time.Time
+	if id, err := strconv.ParseInt(msg.Author.ID, 10, 64); err != nil {
+		ts = time.Now()
+	} else {
+		ts = sf.Snowflake2utc(id)
+	}
+
+	url := discordgo.USER_AVATAR(msg.Author.ID, msg.Author.Avatar)
+	response, _ := http.Get(url)
+
+	defer response.Body.Close()
+	avatar := response.Body
+
+	res := "```rb\n"
+	res += fmt.Sprintf("%-15s %s  '%s'\n", "Name", ":", msg.Author.Username)
+	res += fmt.Sprintf("%-15s %s  '%s'\n", "Discriminator", ":", msg.Author.Discriminator)
+	res += fmt.Sprintf("%-15s %s  '%s'\n", "ID", ":", msg.Author.ID)
+	res += fmt.Sprintf("%-15s %s  '%t'\n", "Verfied", ":", msg.Author.Verified)
+	res += fmt.Sprintf("%-15s %s  '%v'\n", "Account Created", ":", ts)
+	res += "```"
+	session.ChannelMessageSend(channelID, res)
+	session.ChannelFileSend(channelID, "avatar.jpg", avatar)
+}
+
+var whoami = Whoami{Name: "whoami"}

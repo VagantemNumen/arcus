@@ -25,12 +25,13 @@ func ready(s *discordgo.Session, event *discordgo.Ready) {
 	cmds = append(cmds, ping)
 	cmds = append(cmds, uptime)
 	cmds = append(cmds, stats)
+	cmds = append(cmds, whoami)
 	go ProcessCommands(cmds)
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	msg := m.Message
-	guild := getGuid(s, msg.ChannelID)
+	guild := getGuild(s, msg.ChannelID)
 	channel := getChannel(s, msg.ChannelID)
 	LogMessage(msg, guild, channel)
 
@@ -59,13 +60,13 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 	msg := m.Message
-	guild := getGuid(s, msg.ChannelID)
+	guild := getGuild(s, msg.ChannelID)
 	channel := getChannel(s, msg.ChannelID)
 	fmt.Println(chalk.Magenta.Color(fmt.Sprintf("Message Updated at %v", msg.EditedTimestamp)))
 	LogMessage(msg, guild, channel)
 }
 
-func getGuid(s *discordgo.Session, channelID string) *discordgo.Guild {
+func getGuild(s *discordgo.Session, channelID string) *discordgo.Guild {
 	channel := getChannel(s, channelID)
 
 	guild, err := s.State.Guild(channel.GuildID)
