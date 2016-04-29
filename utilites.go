@@ -5,6 +5,8 @@ import (
 	"runtime"
 	"strings"
 	"time"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 // Uptime the struct for []uptime command.
@@ -98,10 +100,17 @@ func (c Stats) name() string {
 }
 
 func (c Stats) process(channelID string, args []string) {
+	var channels []*discordgo.Channel
+	guilds := session.State.Guilds
+	for _, guild := range guilds {
+		channels = append(channels, guild.Channels...)
+	}
 	res := "```rb\n"
 	res += fmt.Sprintf("%-12s %s  '%s'\n", "Name", ":", arcus.Username)
 	res += fmt.Sprintf("%-12s %s  '%s'\n", "ID", ":", arcus.ID)
 	res += fmt.Sprintf("%-12s %s  '%s'\n", "Version", ":", arcus.Version)
+	res += fmt.Sprintf("%-12s %s  '%d'\n", "Guilds", ":", len(guilds))
+	res += fmt.Sprintf("%-12s %s  '%d'\n", "Channels", ":", len(channels))
 	res += fmt.Sprintf("%-12s %s  '%s'\n", "Developer", ":", arcus.Author)
 	res += fmt.Sprintf("%-12s %s  '%s'\n", "Go Version", ":", runtime.Version())
 	res += fmt.Sprintf("%-12s %s  '%s'\n", "Memory Usage", ":", getMem())
