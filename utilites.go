@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"runtime"
 	"strings"
 	"time"
 )
 
+// Uptime the struct for []uptime command.
 type Uptime struct {
 	Command
 	Name string
@@ -84,3 +86,36 @@ func (c Uptime) name() string {
 }
 
 var uptime = Uptime{Name: "uptime"}
+
+// Stats the struct for []stats command.
+type Stats struct {
+	Command
+	Name string
+}
+
+func (c Stats) name() string {
+	return c.Name
+}
+
+func (c Stats) process(channelID string, args []string) {
+	res := "```rb\n"
+	res += fmt.Sprintf("%-12s %s  '%s'\n", "Name", ":", arcus.Username)
+	res += fmt.Sprintf("%-12s %s  '%s'\n", "ID", ":", arcus.ID)
+	res += fmt.Sprintf("%-12s %s  '%s'\n", "Version", ":", arcus.Version)
+	res += fmt.Sprintf("%-12s %s  '%s'\n", "Developer", ":", arcus.Author)
+	res += fmt.Sprintf("%-12s %s  '%s'\n", "Go Version", ":", runtime.Version())
+	res += fmt.Sprintf("%-12s %s  '%s'\n", "Memory Usage", ":", getMem())
+	res += "```"
+	session.ChannelMessageSend(channelID, res)
+}
+
+func getMem() string {
+	var m = new(runtime.MemStats)
+	runtime.ReadMemStats(m)
+	alloc := m.Alloc / 1e6
+	tallloc := m.TotalAlloc / 1e6
+	sys := m.Sys / 1e6
+	return fmt.Sprintf("%dMB / %dMB (%dMB)", alloc, tallloc, sys)
+}
+
+var stats = Stats{Name: "stats"}
