@@ -7,6 +7,7 @@ type PingPong struct {
 }
 
 func (c PingPong) process(channelID string, args []string, msg *discordgo.Message) {
+	session.ChannelTyping(channelID)
 	session.ChannelMessageSend(channelID, "pong")
 }
 
