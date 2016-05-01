@@ -20,7 +20,12 @@ type Uptime struct {
 
 func (c Uptime) process(channelID string, args []string, msg *discordgo.Message) {
 	res := fmt.Sprintf("```xl\nUptime: %s\n```", getUptime())
-	session.ChannelMessageSend(channelID, res)
+	if err := session.ChannelTyping(channelID); err != nil {
+		printError(err)
+	}
+	if err := session.ChannelMessageSend(channelID, res); err != nil {
+		printError(err)
+	}
 }
 
 func getUptime() string {
@@ -118,7 +123,12 @@ func (c Stats) process(channelID string, args []string, msg *discordgo.Message) 
 	res += fmt.Sprintf("%-12s %s  '%s'\n", "Go Version", ":", runtime.Version())
 	res += fmt.Sprintf("%-12s %s  '%s'\n", "Memory Usage", ":", getMem())
 	res += "```"
-	session.ChannelMessageSend(channelID, res)
+	if err := session.ChannelTyping(channelID); err != nil {
+		printError(err)
+	}
+	if err := session.ChannelMessageSend(channelID, res); err != nil {
+		printError(err)
+	}
 }
 
 func getMem() string {
@@ -176,8 +186,15 @@ func (c Whoami) process(channelID string, args []string, msg *discordgo.Message)
 	res += fmt.Sprintf("%-15s %s  '%v'\n", "Joined At", ":", joined.UTC().Format("January 02, 2006 15:04:05 MST"))
 	res += fmt.Sprintf("%-15s %s  '%s'\n", "Roles", ":", strings.Join(roles, ", "))
 	res += "```"
-	session.ChannelMessageSend(channelID, res)
-	session.ChannelFileSend(channelID, "avatar.jpg", avatar)
+	if err := session.ChannelTyping(channelID); err != nil {
+		printError(err)
+	}
+	if err := session.ChannelMessageSend(channelID, res); err != nil {
+		printError(err)
+	}
+	if _, err := session.ChannelFileSend(channelID, "avatar.jpg", avatar); err != nil {
+		printError(err)
+	}
 }
 
 var whoami = Whoami{Name: "whoami"}
