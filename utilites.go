@@ -149,13 +149,10 @@ func (c Whoami) process(channelID string, args []string, msg *discordgo.Message)
 	} else {
 		ts = sf.Snowflake2utc(id)
 	}
-
 	url := discordgo.USER_AVATAR(msg.Author.ID, msg.Author.Avatar)
 	response, _ := http.Get(url)
-
 	defer response.Body.Close()
 	avatar := response.Body
-
 	ch, _ := session.State.Channel(channelID)
 	g := ch.GuildID
 	guild, _ := session.State.Guild(g)
@@ -168,15 +165,13 @@ func (c Whoami) process(channelID string, args []string, msg *discordgo.Message)
 			}
 		}
 	}
-
 	joined, _ := time.Parse("2006-01-02T15:04:05.000000-07:00", mem.JoinedAt)
-
 	res := "```rb\n"
 	res += fmt.Sprintf("%-15s %s  '%s'\n", "Name", ":", msg.Author.Username)
 	res += fmt.Sprintf("%-15s %s  '%s'\n", "Discriminator", ":", msg.Author.Discriminator)
 	res += fmt.Sprintf("%-15s %s  '%s'\n", "ID", ":", msg.Author.ID)
 	res += fmt.Sprintf("%-15s %s  '%t'\n", "Verfied", ":", msg.Author.Verified)
-	res += fmt.Sprintf("%-15s %s  '%v'\n", "Account Created", ":", ts.Format("January 02, 2006 15:04:05 MST"))
+	res += fmt.Sprintf("%-15s %s  '%v'\n", "Account Created", ":", ts.Format("January 02, 2006 15:04:05 MSTP"))
 	res += fmt.Sprintf("%-15s %s  '%v'\n", "Joined At", ":", joined.UTC().Format("January 02, 2006 15:04:05 MST"))
 	res += fmt.Sprintf("%-15s %s  '%s'\n", "Roles", ":", strings.Join(roles, ", "))
 	res += "```"
