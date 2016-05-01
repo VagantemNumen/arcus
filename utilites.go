@@ -167,11 +167,12 @@ func (c Whoami) process(channelID string, args []string, msg *discordgo.Message)
 	}
 	joined, _ := time.Parse("2006-01-02T15:04:05.000000-07:00", mem.JoinedAt)
 	res := "```rb\n"
-	res += fmt.Sprintf("%-15s %s  '%s'\n", "Name", ":", msg.Author.Username)
+	res += fmt.Sprintf("%-15s %s  '%s'\n", "Name", ":", strings.Replace(msg.Author.Username, "'", "’", -1))
 	res += fmt.Sprintf("%-15s %s  '%s'\n", "Discriminator", ":", msg.Author.Discriminator)
 	res += fmt.Sprintf("%-15s %s  '%s'\n", "ID", ":", msg.Author.ID)
-	res += fmt.Sprintf("%-15s %s  '%t'\n", "Verfied", ":", msg.Author.Verified)
-	res += fmt.Sprintf("%-15s %s  '%v'\n", "Account Created", ":", ts.Format("January 02, 2006 15:04:05 MSTP"))
+	res += fmt.Sprintf("%-15s %s  '%s'\n", "Nickname", ":", mem.Nick)
+	res += fmt.Sprintf("%-15s %s  '%t'\n", "Verified", ":", msg.Author.Verified)
+	res += fmt.Sprintf("%-15s %s  '%v'\n", "Account Created", ":", ts.Format("January 02, 2006 15:04:05 MST"))
 	res += fmt.Sprintf("%-15s %s  '%v'\n", "Joined At", ":", joined.UTC().Format("January 02, 2006 15:04:05 MST"))
 	res += fmt.Sprintf("%-15s %s  '%s'\n", "Roles", ":", strings.Join(roles, ", "))
 	res += "```"
