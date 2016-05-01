@@ -126,8 +126,7 @@ func getMem() string {
 	runtime.ReadMemStats(m)
 	alloc := m.Alloc / 1e6
 	tallloc := m.TotalAlloc / 1e6
-	sys := m.Sys / 1e6
-	return fmt.Sprintf("%dMB / %dMB (%dMB)", alloc, tallloc, sys)
+	return fmt.Sprintf("%dMB / %dMB", alloc, tallloc)
 }
 
 var stats = Stats{Name: "stats"}
@@ -143,6 +142,7 @@ func (c Whoami) name() string {
 }
 
 func (c Whoami) process(channelID string, args []string, msg *discordgo.Message) {
+	fmt.Println("From whoami.process()")
 	var ts time.Time
 	if id, err := strconv.ParseInt(msg.Author.ID, 10, 64); err != nil {
 		ts = time.Now()
@@ -156,12 +156,29 @@ func (c Whoami) process(channelID string, args []string, msg *discordgo.Message)
 	defer response.Body.Close()
 	avatar := response.Body
 
+	ch, _ := session.State.Channel(channelID)
+	g := ch.GuildID
+	guild, _ := session.State.Guild(g)
+	mem, _ := session.GuildMember(g, msg.Author.ID)
+	var roles []string
+	for _, role := range mem.Roles {
+		for _, gr := range guild.Roles {
+			if role == gr.ID {
+				roles = append(roles, gr.Name)
+			}
+		}
+	}
+
+	joined, _ := time.Parse("2006-01-02T15:04:05.000000-07:00", mem.JoinedAt)
+
 	res := "```rb\n"
 	res += fmt.Sprintf("%-15s %s  '%s'\n", "Name", ":", msg.Author.Username)
 	res += fmt.Sprintf("%-15s %s  '%s'\n", "Discriminator", ":", msg.Author.Discriminator)
 	res += fmt.Sprintf("%-15s %s  '%s'\n", "ID", ":", msg.Author.ID)
 	res += fmt.Sprintf("%-15s %s  '%t'\n", "Verfied", ":", msg.Author.Verified)
-	res += fmt.Sprintf("%-15s %s  '%v'\n", "Account Created", ":", ts)
+	res += fmt.Sprintf("%-15s %s  '%v'\n", "Account Created", ":", ts.Format("January 02, 2006 15:04:05 MST"))
+	res += fmt.Sprintf("%-15s %s  '%v'\n", "Joined At", ":", joined.UTC().Format("January 02, 2006 15:04:05 MST"))
+	res += fmt.Sprintf("%-15s %s  '%s'\n", "Roles", ":", strings.Join(roles, ", "))
 	res += "```"
 	session.ChannelMessageSend(channelID, res)
 	session.ChannelFileSend(channelID, "avatar.jpg", avatar)
