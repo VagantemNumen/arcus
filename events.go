@@ -26,6 +26,7 @@ func ready(s *discordgo.Session, event *discordgo.Ready) {
 	cmds = append(cmds, uptime)
 	cmds = append(cmds, stats)
 	cmds = append(cmds, whoami)
+	cmds = append(cmds, whois)
 	go ProcessCommands(cmds)
 }
 

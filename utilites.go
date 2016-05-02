@@ -21,10 +21,10 @@ type Uptime struct {
 func (c Uptime) process(channelID string, args []string, msg *discordgo.Message) {
 	res := fmt.Sprintf("```xl\nUptime: %s\n```", getUptime())
 	if err := session.ChannelTyping(channelID); err != nil {
-		printError(err)
+		printError(fmt.Sprintf("%v", err))
 	}
-	if err := session.ChannelMessageSend(channelID, res); err != nil {
-		printError(err)
+	if _, err := session.ChannelMessageSend(channelID, res); err != nil {
+		printError(fmt.Sprintf("%v", err))
 	}
 }
 
@@ -124,10 +124,10 @@ func (c Stats) process(channelID string, args []string, msg *discordgo.Message) 
 	res += fmt.Sprintf("%-12s %s  '%s'\n", "Memory Usage", ":", getMem())
 	res += "```"
 	if err := session.ChannelTyping(channelID); err != nil {
-		printError(err)
+		printError(fmt.Sprintf("%v", err))
 	}
-	if err := session.ChannelMessageSend(channelID, res); err != nil {
-		printError(err)
+	if _, err := session.ChannelMessageSend(channelID, res); err != nil {
+		printError(fmt.Sprintf("%v", err))
 	}
 }
 
@@ -187,14 +187,86 @@ func (c Whoami) process(channelID string, args []string, msg *discordgo.Message)
 	res += fmt.Sprintf("%-15s %s  '%s'\n", "Roles", ":", strings.Join(roles, ", "))
 	res += "```"
 	if err := session.ChannelTyping(channelID); err != nil {
-		printError(err)
+		printError(fmt.Sprintf("%v", err))
 	}
-	if err := session.ChannelMessageSend(channelID, res); err != nil {
-		printError(err)
+	if _, err := session.ChannelMessageSend(channelID, res); err != nil {
+		printError(fmt.Sprintf("%v", err))
 	}
 	if _, err := session.ChannelFileSend(channelID, "avatar.jpg", avatar); err != nil {
-		printError(err)
+		printError(fmt.Sprintf("%v", err))
 	}
 }
 
 var whoami = Whoami{Name: "whoami"}
+
+type Whois struct {
+	Command
+	Name string
+}
+
+func (c Whois) name() string {
+	return c.Name
+}
+
+func (c Whois) process(channelID string, args []string, msg *discordgo.Message) {
+	var res string
+	var user *discordgo.User
+
+	if len(msg.Mentions) > 0 {
+		user = msg.Mentions[0]
+	} else if len(args) > 0 && len(args[0]) >= 2 {
+		for _, g := range session.State.Guilds {
+			for _, mem := range g.Members {
+				if strings.Contains(strings.ToUpper(mem.User.Username), strings.ToUpper(args[0])) {
+					user = mem.User
+				}
+			}
+		}
+	}
+	if user != nil {
+		var ts time.Time
+		if id, err := strconv.ParseInt(user.ID, 10, 64); err != nil {
+			ts = time.Now()
+		} else {
+			ts = sf.Snowflake2utc(id)
+		}
+		url := discordgo.USER_AVATAR(user.ID, user.Avatar)
+		response, _ := http.Get(url)
+		defer response.Body.Close()
+		avatar := response.Body
+		ch, _ := session.State.Channel(channelID)
+		g := ch.GuildID
+		guild, _ := session.State.Guild(g)
+		mem, _ := session.GuildMember(g, user.ID)
+		var roles []string
+		for _, role := range mem.Roles {
+			for _, gr := range guild.Roles {
+				if role == gr.ID {
+					roles = append(roles, gr.Name)
+				}
+			}
+		}
+		joined, _ := time.Parse("2006-01-02T15:04:05.000000-07:00", mem.JoinedAt)
+		res += "```rb\n"
+		res += fmt.Sprintf("%-15s %s  '%s'\n", "Name", ":", strings.Replace(user.Username, "'", "’", -1))
+		res += fmt.Sprintf("%-15s %s  '%s'\n", "Discriminator", ":", user.Discriminator)
+		res += fmt.Sprintf("%-15s %s  '%s'\n", "ID", ":", user.ID)
+		res += fmt.Sprintf("%-15s %s  '%s'\n", "Nickname", ":", mem.Nick)
+		res += fmt.Sprintf("%-15s %s  '%v'\n", "Account Created", ":", ts.Format("January 02, 2006 15:04:05 MST"))
+		res += fmt.Sprintf("%-15s %s  '%v'\n", "Joined At", ":", joined.UTC().Format("January 02, 2006 15:04:05 MST"))
+		res += fmt.Sprintf("%-15s %s  '%s'\n", "Roles", ":", strings.Join(roles, ", "))
+		res += "```"
+
+		if err := session.ChannelTyping(channelID); err != nil {
+			printError(fmt.Sprintf("%v", err))
+		}
+		if _, err := session.ChannelMessageSend(channelID, res); err != nil {
+			printError(fmt.Sprintf("%v", err))
+		}
+		if _, err := session.ChannelFileSend(channelID, "avatar.jpg", avatar); err != nil {
+			printError(fmt.Sprintf("%v", err))
+		}
+	}
+}
+
+var whois = Whois{Name: "whois"}
