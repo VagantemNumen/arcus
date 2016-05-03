@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"strings"
-
 	"github.com/bwmarrin/discordgo"
 	"github.com/ttacon/chalk"
+	"regexp"
+	"strings"
 )
 
 type cmd struct {
@@ -42,13 +42,17 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	args := strings.Split(strings.TrimPrefix(strings.TrimSpace(msg.Content), prefix), " ")
+	content := messageWithReplacedMentions(msg)
+
+	args := strings.Split(strings.TrimPrefix(strings.TrimSpace(content), prefix), " ")
 	cmdText := args[0]
 	if len(args) > 1 {
 		args = args[1:]
 	} else {
 		args = nil
 	}
+	deleteSpace(&args, "")
+	deleteSpace(&args, " ")
 	go func() {
 		cmdChan <- &cmd{
 			cmdText,
@@ -109,4 +113,55 @@ func LogMessage(msg *discordgo.Message, guild *discordgo.Guild, channel *discord
 func LogDelMessage(msg *discordgo.Message, guild *discordgo.Guild, channel *discordgo.Channel) {
 	fmt.Println(chalk.Red.Color("Message Deleted:"))
 	LogMessage(msg, guild, channel)
+}
+
+func messageWithReplacedMentions(m *discordgo.Message) string {
+	if m.Mentions == nil {
+		return m.Content
+	}
+	content := m.Content
+	for _, user := range m.Mentions {
+		content = strings.Replace(content, fmt.Sprintf("<@%s>", user.ID), "", -1)
+		content = strings.Replace(content, fmt.Sprintf("<@!%s>", user.ID), "", -1)
+	}
+
+	roleIDRegex := regexp.MustCompile("<@&[0-9]*>")
+	content = roleIDRegex.ReplaceAllStringFunc(content, func(str string) string {
+		roleID := str[3 : len(str)-1]
+		c, err := session.State.Channel(m.ChannelID)
+		if err != nil {
+			return str
+		}
+		g, err := session.State.Guild(c.GuildID)
+		if err != nil {
+			return str
+		}
+		for _, r := range g.Roles {
+			if r.ID == roleID {
+				return ""
+			}
+		}
+		return str
+	})
+
+	channelIDRegex := regexp.MustCompile("<#[0-9]*>")
+	content = channelIDRegex.ReplaceAllStringFunc(content, func(str string) string {
+		_, err := session.State.Channel(str[2 : len(str)-1])
+		if err != nil {
+			return str
+		}
+
+		return ""
+	})
+	return content
+}
+
+func deleteSpace(s *[]string, selector string) {
+	var temp []string
+	for _, str := range *s {
+		if str != selector {
+			temp = append(temp, str)
+		}
+	}
+	*s = temp
 }
