@@ -4,11 +4,12 @@
 	author = "Myxbaah"
 	owner = "148793367126474752"
 	prefix = "[]"
-	debug = false
+	debug = true
 
 [auth]
 	token = ""
 
 [[feeds]]
-	feed_url = "https://rsstestdiscord.wordpress.com/feed/"
-	channel_id = ""
+	feed_url = "https://blog.discordapp.com/rss/"
+	channel_id = "145645642868452776"
+	timeout = 20
