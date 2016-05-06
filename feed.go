@@ -41,19 +41,19 @@ func (fh *FeedHandlers) ProcessItems(feed *rss.Feed, ch *rss.Channel, newitems [
 	regex := regexp.MustCompile(`<!--[\S\s]*?-->|<(?:"".*?""|'.*?'|[\S\s])*?>`)
 	for i := len(items) - 1; i >= 0; i-- {
 		pub, _ := items[i].ParsedPubDate()
-		//if pub.After(lastUpdate) {
-		var res string
-		res += fmt.Sprintf("**%s**\n", items[i].Title)
-		res += fmt.Sprintf("_**%s** - %s_\n", items[i].Author.Name, pub.UTC().Format("January 02, 2006 15:04:05 MST"))
-		res += fmt.Sprintf("%s\n", html.UnescapeString(regex.ReplaceAllString(items[i].Description, "")))
-		res += fmt.Sprintf("<%s>\n", items[i].Links[0].Href)
-		if err := session.ChannelTyping(channelID); err != nil {
-			printError(fmt.Sprintf("%v", err))
+		if pub.After(lastUpdate) {
+			var res string
+			res += fmt.Sprintf("**%s**\n", items[i].Title)
+			res += fmt.Sprintf("_**%s** - %s_\n", items[i].Author.Name, pub.UTC().Format("January 02, 2006 15:04:05 MST"))
+			res += fmt.Sprintf("%s\n", html.UnescapeString(regex.ReplaceAllString(items[i].Description, "")))
+			res += fmt.Sprintf("<%s>\n", items[i].Links[0].Href)
+			if err := session.ChannelTyping(channelID); err != nil {
+				printError(fmt.Sprintf("%v", err))
+			}
+			if _, err := session.ChannelMessageSend(channelID, res); err != nil {
+				printError(fmt.Sprintf("%v", err))
+			}
+			lastUpdate = pub
 		}
-		if _, err := session.ChannelMessageSend(channelID, res); err != nil {
-			printError(fmt.Sprintf("%v", err))
-		}
-		lastUpdate = pub
-		//}
 	}
 }
