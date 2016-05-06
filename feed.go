@@ -56,24 +56,4 @@ func (fh *FeedHandlers) ProcessItems(feed *rss.Feed, ch *rss.Channel, newitems [
 		lastUpdate = pub
 		//}
 	}
-	/*
-			// RSS and Shared fields
-		    Title       string
-		    Links       []*Link
-		    Description string
-		    Author      Author
-		    Categories  []*Category
-		    Comments    string
-		    Enclosures  []*Enclosure
-		    Guid        *string
-		    PubDate     string
-		    Source      *Source
-
-		    // Atom specific fields
-		    Id           string
-		    Generator    *Generator
-		    Contributors []string
-		    Content      *Content
-		    Updated      string
-	*/
 }
