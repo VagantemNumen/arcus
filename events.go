@@ -65,10 +65,12 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 	msg := m.Message
-	guild := getGuild(s, msg.ChannelID)
-	channel := getChannel(s, msg.ChannelID)
-	fmt.Println(chalk.Magenta.Color(fmt.Sprintf("Message Updated at %v", msg.EditedTimestamp)))
-	LogMessage(msg, guild, channel)
+	if msg.Author != nil {
+		guild := getGuild(s, msg.ChannelID)
+		channel := getChannel(s, msg.ChannelID)
+		fmt.Println(chalk.Magenta.Color(fmt.Sprintf("Message Updated at %v", msg.EditedTimestamp)))
+		LogMessage(msg, guild, channel)
+	}
 }
 
 func getGuild(s *discordgo.Session, channelID string) *discordgo.Guild {
