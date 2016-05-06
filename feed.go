@@ -2,16 +2,22 @@ package main
 
 import (
 	"fmt"
+	"html"
 	"os"
+	"regexp"
 	"time"
 
 	rss "github.com/jteeuwen/go-pkg-rss"
 )
 
-type FeedHandlers struct{}
+var lastUpdate = time.Now()
 
-func pollFeed(uri string, timeout int) {
-	handlers := &FeedHandlers{}
+type FeedHandlers struct {
+	channelID string
+}
+
+func pollFeed(uri string, timeout int, channelID string) {
+	handlers := &FeedHandlers{channelID}
 	feed := rss.NewWithHandlers(timeout, true, handlers, handlers)
 
 	for {
@@ -30,16 +36,26 @@ func (fh *FeedHandlers) ProcessChannels(feed *rss.Feed, newchannels []*rss.Chann
 
 func (fh *FeedHandlers) ProcessItems(feed *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 	//fmt.Printf("%d new rad item(s) in %s\n", len(newitems), feed.Url)
-	/*for _, item := range newitems {
-		fmt.Println("Title:", item.Title)
-		for _, link := range item.Links {
-			fmt.Println("Link:", link)
+	channelID := fh.channelID
+	items := newitems
+	regex := regexp.MustCompile(`<!--[\S\s]*?-->|<(?:"".*?""|'.*?'|[\S\s])*?>`)
+	for i := len(items) - 1; i >= 0; i-- {
+		pub, _ := items[i].ParsedPubDate()
+		//if pub.After(lastUpdate) {
+		var res string
+		res += fmt.Sprintf("**%s**\n", items[i].Title)
+		res += fmt.Sprintf("_**%s** - %s_\n", items[i].Author.Name, pub.UTC().Format("January 02, 2006 15:04:05 MST"))
+		res += fmt.Sprintf("%s\n", html.UnescapeString(regex.ReplaceAllString(items[i].Description, "")))
+		res += fmt.Sprintf("<%s>\n", items[i].Links[0].Href)
+		if err := session.ChannelTyping(channelID); err != nil {
+			printError(fmt.Sprintf("%v", err))
 		}
-		fmt.Println("Description:", item.Description)
-		fmt.Println("Comments:", len(item.Comments))
-		fmt.Println("Author:", item.Author)
-		fmt.Println("PubDate:", item.PubDate)
-	}*/
+		if _, err := session.ChannelMessageSend(channelID, res); err != nil {
+			printError(fmt.Sprintf("%v", err))
+		}
+		lastUpdate = pub
+		//}
+	}
 	/*
 			// RSS and Shared fields
 		    Title       string
