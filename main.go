@@ -64,7 +64,7 @@ func main() {
 
 	printInfo("Starting to poll feeds.")
 	for _, feed := range config.Feeds {
-		go pollFeed(feed.FeedUrl, feed.Timeout)
+		go pollFeed(feed.FeedUrl, feed.Timeout, feed.ChannelID)
 	}
 
 	m := new(runtime.MemStats)
