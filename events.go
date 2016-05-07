@@ -73,6 +73,47 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 	}
 }
 
+func guildRoleCreate(s *discordgo.Session, r *discordgo.GuildRoleCreate) {
+	guild, err := s.State.Guild(r.GuildID)
+	if err != nil {
+		fmt.Println(err)
+	}
+	guild.Roles = append(guild.Roles, r.Role)
+	if err = s.State.GuildAdd(guild); err != nil {
+		fmt.Println(err)
+	}
+}
+
+func guildRoleUpdate(s *discordgo.Session, r *discordgo.GuildRoleUpdate) {
+	guild, err := s.State.Guild(r.GuildID)
+	if err != nil {
+		fmt.Println(err)
+	}
+	for i, _ := range guild.Roles {
+		if guild.Roles[i].ID == r.Role.ID {
+			guild.Roles[i] = r.Role
+		}
+	}
+	if err = s.State.GuildAdd(guild); err != nil {
+		fmt.Println(err)
+	}
+}
+
+func guildRoleDelete(s *discordgo.Session, r *discordgo.GuildRoleDelete) {
+	guild, err := s.State.Guild(r.GuildID)
+	if err != nil {
+		fmt.Println(err)
+	}
+	for i, _ := range guild.Roles {
+		if guild.Roles[i].ID == r.RoleID {
+			guild.Roles = append(guild.Roles[:i], guild.Roles[i+1:]...)
+		}
+	}
+	if err = s.State.GuildAdd(guild); err != nil {
+		fmt.Println(err)
+	}
+}
+
 func getGuild(s *discordgo.Session, channelID string) *discordgo.Guild {
 	channel := getChannel(s, channelID)
 
