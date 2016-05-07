@@ -27,6 +27,7 @@ var (
 	session   *discordgo.Session
 	state     *discordgo.State
 	done      = make(chan bool)
+	sigchan   = make(chan os.Signal, 1)
 	arcus     Client
 )
 
@@ -63,7 +64,7 @@ func main() {
 	err = getClient()
 	if err != nil {
 		printError(fmt.Sprintf("Error getting bot: %v", err))
-		done <- true
+		sigchan <- syscall.SIGINT
 	}
 
 	printInfo("Starting to poll feeds.")
@@ -77,7 +78,6 @@ func main() {
 	printInfo(fmt.Sprintf("TotalAlloc: %v", m.TotalAlloc/1000000))
 	printInfo(fmt.Sprintf("Sys: %v", m.Sys/1000000))
 
-	sigchan := make(chan os.Signal, 1)
 	signal.Notify(sigchan, syscall.SIGTERM, syscall.SIGINT)
 	go func() {
 		sig := <-sigchan
