@@ -10,14 +10,17 @@ import (
 	rss "github.com/jteeuwen/go-pkg-rss"
 )
 
-var lastUpdate = time.Now()
-
+//FeedHandlers struct to hold the feed handlers as well as easy access to relevant fields.
 type FeedHandlers struct {
-	channelID string
+	channelID  string
+	lastUpdate time.Time
 }
 
 func pollFeed(uri string, timeout int, channelID string) {
-	handlers := &FeedHandlers{channelID}
+	handlers := &FeedHandlers{
+		channelID,
+		time.Now().UTC(),
+	}
 	feed := rss.NewWithHandlers(timeout, true, handlers, handlers)
 
 	for {
@@ -41,7 +44,7 @@ func (fh *FeedHandlers) ProcessItems(feed *rss.Feed, ch *rss.Channel, newitems [
 	regex := regexp.MustCompile(`<!--[\S\s]*?-->|<(?:"".*?""|'.*?'|[\S\s])*?>`)
 	for i := len(items) - 1; i >= 0; i-- {
 		pub, _ := items[i].ParsedPubDate()
-		if pub.After(lastUpdate) {
+		if pub.After(fh.lastUpdate) {
 			var res string
 			res += fmt.Sprintf("**%s**\n", items[i].Title)
 			res += fmt.Sprintf("_**%s** - %s_\n", items[i].Author.Name, pub.UTC().Format("January 02, 2006 15:04:05 MST"))
@@ -53,7 +56,7 @@ func (fh *FeedHandlers) ProcessItems(feed *rss.Feed, ch *rss.Channel, newitems [
 			if _, err := session.ChannelMessageSend(channelID, res); err != nil {
 				printError(fmt.Sprintf("%v", err))
 			}
-			lastUpdate = pub
+			fh.lastUpdate = pub
 		}
 	}
 }
