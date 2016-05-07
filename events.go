@@ -19,7 +19,7 @@ var cmdChan = make(chan *cmd)
 
 func ready(s *discordgo.Session, event *discordgo.Ready) {
 	// Set the playing status.
-	s.UpdateStatus(0, "Arcus")
+	s.UpdateStatus(0, "Polling Feeds!")
 	state = s.State
 	var cmds []Command
 	cmds = append(cmds, ping)
