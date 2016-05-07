@@ -22,11 +22,11 @@ func ready(s *discordgo.Session, event *discordgo.Ready) {
 	s.UpdateStatus(0, "Polling Feeds!")
 	state = s.State
 	var cmds []Command
-	cmds = append(cmds, ping)
-	cmds = append(cmds, uptime)
-	cmds = append(cmds, stats)
-	cmds = append(cmds, whoami)
-	cmds = append(cmds, whois)
+	cmds = append(cmds, ping, uptime, stats, whoami, whois, guildinfo)
+	// cmds = append(cmds, )
+	// cmds = append(cmds, )
+	// cmds = append(cmds, )
+	cmds = append(cmds)
 	go ProcessCommands(cmds)
 }
 

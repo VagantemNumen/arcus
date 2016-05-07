@@ -246,6 +246,7 @@ func (c Whois) process(channelID string, args []string, msg *discordgo.Message) 
 				}
 			}
 		}
+
 		joined, _ := time.Parse("2006-01-02T15:04:05.000000-07:00", mem.JoinedAt)
 		res += "```rb\n"
 		res += fmt.Sprintf("%-15s %s  '%s'\n", "Name", ":", strings.Replace(user.Username, "'", "’", -1))
@@ -270,3 +271,75 @@ func (c Whois) process(channelID string, args []string, msg *discordgo.Message) 
 }
 
 var whois = Whois{Name: "whois"}
+
+//GuildInfo a struct for []guildinfo command.
+type GuildInfo struct {
+	Command
+	Name string
+}
+
+func (c GuildInfo) name() string {
+	return c.Name
+}
+
+func (c GuildInfo) process(channelID string, args []string, msg *discordgo.Message) {
+	var res string
+	channel, err := session.State.Channel(channelID)
+	if err != nil {
+		return
+	}
+	guild, err := session.State.Guild(channel.GuildID)
+	if err != nil {
+		return
+	}
+	if guild != nil {
+		var ts time.Time
+		if id, err := strconv.ParseInt(guild.ID, 10, 64); err != nil {
+			ts = time.Now()
+		} else {
+			ts = sf.Snowflake2utc(id)
+		}
+		txtchans, voicechans := 0, 0
+		for _, ch := range guild.Channels {
+			if ch.Type == "text" {
+				txtchans++
+			} else if ch.Type == "voice" {
+				voicechans++
+			}
+		}
+		url := discordgo.GUILD_ICON(guild.ID, guild.Icon)
+		response, _ := http.Get(url)
+		defer response.Body.Close()
+		icon := response.Body
+		owner, _ := session.State.Member(guild.ID, guild.OwnerID)
+		var afkchannel string
+		if afk, err := session.State.Channel(guild.AfkChannelID); err != nil {
+			afkchannel = "None"
+		} else {
+			afkchannel = afk.Name
+		}
+		res += "```rb\n"
+		res += fmt.Sprintf("%-14s %s  '%s'\n", "Name", ":", guild.Name)
+		res += fmt.Sprintf("%-14s %s  '%s'\n", "ID", ":", guild.ID)
+		res += fmt.Sprintf("%-14s %s  '%s'\n", "Owner", ":", owner.User.Username)
+		res += fmt.Sprintf("%-14s %s  '%s'\n", "Created At", ":", ts.Format("January 02, 2006 14:04:05 MST"))
+		res += fmt.Sprintf("%-14s %s  '%d'\n", "Member Count", ":", len(guild.Members))
+		res += fmt.Sprintf("%-14s %s  '%d'\n", "Roles Count", ":", len(guild.Roles))
+		res += fmt.Sprintf("%-14s %s  '%d'\n", "Text Channels", ":", txtchans)
+		res += fmt.Sprintf("%-14s %s  '%d'\n", "Voice Channels", ":", voicechans)
+		res += fmt.Sprintf("%-14s %s  '%s'\n", "AFK Channel", ":", afkchannel)
+		res += fmt.Sprintf("%-14s %s  '%s'\n", "Region", ":", upperFirst(guild.Region))
+		res += "```"
+		if err := session.ChannelTyping(channelID); err != nil {
+			printError(fmt.Sprintf("%v", err))
+		}
+		if _, err := session.ChannelMessageSend(channelID, res); err != nil {
+			printError(fmt.Sprintf("%v", err))
+		}
+		if _, err := session.ChannelFileSend(channelID, "icon.jpg", icon); err != nil {
+			printError(fmt.Sprintf("%v", err))
+		}
+	}
+}
+
+var guildinfo = GuildInfo{Name: "guildinfo"}
