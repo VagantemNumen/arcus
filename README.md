@@ -12,7 +12,7 @@ The bot will poll for feeds provided in the config.toml file and post new feeds 
 
 ```
 - []whoami : Shows the user information of the person.
-- []whois <part/full username>/<@mention> : Shows the user information of the matching person the bot finds first.
+- []whois <part/full username>/<@mention> : Shows the user information of the matching person the bot finds.
 - []guildinfo : Shows information about the guild.
 - []uptime : Shows the uptime of the bot.
 ```
@@ -35,20 +35,20 @@ Inside the file put the following content and replace the specified parts.
 	author 	= "AI"
 	owner 	= "148793367126474752"
 	prefix 	= "[]" #Change to the prefix you want to use for commands.
-	debug = false  #Set to true to get additional output.
+	debug 	= false  #Set to true to get additional output.
 
 [auth]
-	token = "YOUR_BOT_TOKEN"
+	token 	= "YOUR_BOT_TOKEN"
 
 #Add as many [[feeds]] blocks as needed in the provided format. Keep timeout at 0 for faster feeds.
 [[feeds]]
-	feed_url = "https://blog.discordapp.com/rss/"
-	channel_id = "145645642868452776"
-	timeout = 0
+	feed_url 	= "https://blog.discordapp.com/rss/"
+	channel_id 	= "145645642868452776"
+	timeout 	= 0
 [[feeds]]
-	feed_url = "https://blog.discordapp.com/rss/"
-	channel_id = "145645642868452546"
-	timeout = 0
+	feed_url 	= "https://blog.discordapp.com/rss/"
+	channel_id 	= "145645642868452546"
+	timeout 	= 0
 ```
 
 Run the bot from your shell. If the bot is not in your path keep the executable inside the current working directory along with config.toml.
