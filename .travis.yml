@@ -1,5 +1,5 @@
 language: go
-before_script:
+before_install:
   - go get github.com/bwmarrin/discordgo
   - cd $GOPATH/src/github.com/bwmarrin/discordgo
   - git checkout develop
