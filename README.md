@@ -10,10 +10,12 @@ The bot will poll for feeds provided in the config.toml file and post new feeds 
 
 ### Additional Functions
 
-* []whoami : Shows the user information of the person.
-* []whois <part/full username>/<@mention> : Shows the user information of the matching person the bot finds first.
-* []guildinfo : Shows information about the guild.
-* []uptime : Shows the uptime of the bot.
+```
+- []whoami : Shows the user information of the person.
+- []whois <part/full username>/<@mention> : Shows the user information of the matching person the bot finds first.
+- []guildinfo : Shows information about the guild.
+- []uptime : Shows the uptime of the bot.
+```
 
 ## Getting the release
 
