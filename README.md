@@ -1,6 +1,6 @@
 # Arcus
 
-[![Build Status](https://travis-ci.org/VagantemNumen/arcus.svg?branch=master)](https://travis-ci.org/VagantemNumen/arcus)
+[![Build Status](https://travis-ci.org/VagantemNumen/arcus.svg?branch=master)](https://travis-ci.org/VagantemNumen/arcus) [![Build Status](https://drone.io/github.com/VagantemNumen/arcus/status.png)](https://drone.io/github.com/VagantemNumen/arcus/latest)
 
 A Discord bot written in Go using discordgo Discord API wrapper.
 
