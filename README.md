@@ -16,7 +16,8 @@ The bot will poll for feeds provided in the config.toml file and post new feeds 
 
 ## Getting the release
 
-Download the latest release from [Release](https://github.com/VagantemNumen/arcus/releases/latest)
+Download the latest release from [Release](https://github.com/VagantemNumen/arcus/releases/latest).
+
 Only available for amd64 Linux at the moment.
 
 ## Usage
