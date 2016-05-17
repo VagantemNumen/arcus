@@ -44,7 +44,7 @@ func main() {
 	}
 
 	if config.App.Debug {
-		session.Debug = true
+		session.LogLevel = discordgo.LogDebug
 	}
 
 	session.ShouldReconnectOnError = true
