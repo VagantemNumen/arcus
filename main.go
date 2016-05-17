@@ -83,11 +83,11 @@ func main() {
 		sig := <-sigchan
 		printInfo(fmt.Sprintf("Recieved signal:%v.", sig))
 		printInfo("Cleaning up...")
-		if err = session.Close(); err != nil {
-			printError(fmt.Sprintf("Error cose connection: %v", err))
-		}
 		if err = session.Logout(); err != nil {
 			printError(fmt.Sprintf("Error logging out: %v", err))
+		}
+		if err = session.Close(); err != nil {
+			printError(fmt.Sprintf("Error cose connection: %v", err))
 		}
 		done <- true
 	}()
