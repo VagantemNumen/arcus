@@ -22,7 +22,7 @@ type Client struct {
 }
 
 var (
-	StartTime = time.Now()
+	startTime = time.Now()
 	config    Configuration
 	session   *discordgo.Session
 	state     *discordgo.State
@@ -33,7 +33,7 @@ var (
 
 func main() {
 	var err error
-	printInfo(fmt.Sprintf("Application started at: %v", StartTime))
+	printInfo(fmt.Sprintf("Application started at: %v", startTime))
 
 	config = GetConfig()
 

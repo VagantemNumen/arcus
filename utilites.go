@@ -29,7 +29,7 @@ func (c Uptime) process(channelID string, args []string, msg *discordgo.Message)
 }
 
 func getUptime() string {
-	uptime := time.Since(StartTime)
+	uptime := time.Since(startTime)
 	t := int64(uptime.Nanoseconds() / 1000000)
 
 	ms := t % 1000
