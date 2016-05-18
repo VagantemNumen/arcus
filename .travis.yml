@@ -5,14 +5,15 @@ before_install:
 - git checkout develop
 - cd $HOME/gopath/src/github.com/VagantemNumen/arcus
 go:
-- 1.4
-- 1.5
 - 1.6.2
+install:
+  - "go get -d -v ./..."
+  - "go build -v ./..."
 deploy:
   provider: releases
   api_key:
     secure: AABv/rSohjUHWPezGC2RpQfy+07EhBuUJ8qsfX82U6cFHC2FE9GCiE8CIfqjUuzgipTQd5RtQS+c46jF3qGjnnjBDqW5W04HGp8q0IapnjEwJ/gGqVFhXY2zCSD0ibRIM0pNBfHE/OZBe8T+SDjYMnh2NhIlbRKKxpG8FsgFVvo9B+CLVC3MiT+VB6vpBOwQJXAkmr2AgZRBMNiRRBKWGVvyN0ANk3wilEfhQy1s82mfd56R89/UjFvU3W8wCMtSwTj5HcEtKoaTgN4/Eqry8ED3Qcdi9dBYnZA6w7IABGENHIP61QQAFjD1gh8KBFrLUt3peWrqdqexSultDrEUxrwFi5yeB4cHzNBhng8K5ydulgUYNgqzE7tbe0keSLSAjyTQHvv+L/tfTuJq14W9ZLhpM8LZOZ59+c9AimSyExrwK010hOB913/ptDd9P5NvN3MPjgIwDjbzPHout/c9wQ/zjClLXWzYEhk+9aDozZBAcV0z270ZQLtNXpGntTxIdvfd5OymM0+OWyd/zZmvRS44ClnuETPhWWgsS0AeD+6Y1OB5zDvCZWIMcyGcitMXX0VpMVS7Q51fAu7ELeYteHm/ua+O0qfYyRVBSm2g6n3YwIbS5h/MZzw2Fq09F1iutLbtZvJtH5vASMLWmXVEMgCd44xrku/rgvtB1H9cXnM=
-  file: arcus
+  file: "arcus"
   skip_cleanup: true
   on:
     tags: true
