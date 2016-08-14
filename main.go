@@ -55,10 +55,6 @@ func main() {
 
 	session.AddHandler(messageUpdate)
 
-	session.AddHandler(guildRoleCreate)
-	session.AddHandler(guildRoleUpdate)
-	session.AddHandler(guildRoleDelete)
-
 	session.Open()
 
 	err = getClient()
