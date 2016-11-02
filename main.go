@@ -38,7 +38,7 @@ func main() {
 	config = GetConfig()
 
 	printInfo("Creating Discord Session.")
-	if session, err = discordgo.New(config.Auth.Token); err != nil {
+	if session, err = discordgo.New("Bot " + config.Auth.Token); err != nil {
 		printError(fmt.Sprintf("Error creating Discord session: %v", err))
 		done <- true
 	}

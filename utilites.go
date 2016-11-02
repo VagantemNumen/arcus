@@ -159,7 +159,9 @@ func (c Whoami) process(channelID string, args []string, msg *discordgo.Message)
 	} else {
 		ts = sf.Snowflake2utc(id)
 	}
-	url := discordgo.USER_AVATAR(msg.Author.ID, msg.Author.Avatar)
+
+	url := discordgo.EndpointUserAvatar(msg.Author.ID, msg.Author.Avatar)
+	//url := discordgo.USER_AVATAR(msg.Author.ID, msg.Author.Avatar)
 	response, _ := http.Get(url)
 	defer response.Body.Close()
 	avatar := response.Body
@@ -230,7 +232,9 @@ func (c Whois) process(channelID string, args []string, msg *discordgo.Message) 
 		} else {
 			ts = sf.Snowflake2utc(id)
 		}
-		url := discordgo.USER_AVATAR(user.ID, user.Avatar)
+
+		url := discordgo.EndpointUserAvatar(user.ID, user.Avatar)
+		//url := discordgo.USER_AVATAR(user.ID, user.Avatar)
 		response, _ := http.Get(url)
 		defer response.Body.Close()
 		avatar := response.Body
@@ -307,7 +311,8 @@ func (c GuildInfo) process(channelID string, args []string, msg *discordgo.Messa
 				voicechans++
 			}
 		}
-		url := discordgo.GUILD_ICON(guild.ID, guild.Icon)
+		url := discordgo.EndpointGuildIcon(guild.ID, guild.Icon)
+		//url := discordgo.GUILD_ICON(guild.ID, guild.Icon)
 		response, _ := http.Get(url)
 		defer response.Body.Close()
 		icon := response.Body
