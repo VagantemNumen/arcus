@@ -29,7 +29,7 @@ func pollFeed(uri string, timeout int, channelID string) {
 			return
 		}
 
-		<-time.After(time.Duration(10 * time.Second))
+		<-time.After(time.Duration(30 * time.Second))
 	}
 }
 

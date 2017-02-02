@@ -26,7 +26,7 @@ type Configuration struct {
 //Server definition
 type Feed struct {
 	FeedUrl   string
-	ChannelID string
+	ChannelId string
 	Timeout   int
 }
 
@@ -55,6 +55,8 @@ func GetConfig() Configuration {
 	if err := toml.Unmarshal(buf, &config); err != nil {
 		panic(err)
 	}
+
+	config.App.Version = Version
 
 	return config
 }

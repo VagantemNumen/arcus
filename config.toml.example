@@ -1,6 +1,5 @@
 [app]
 	name 	= "Arcus"
-	version = "1.1.4"
 	author 	= "AI"
 	owner 	= "148793367126474752"
 	prefix 	= "[]"

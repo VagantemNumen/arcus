@@ -21,6 +21,8 @@ type Client struct {
 	Author   string
 }
 
+const Version = "1.2.0"
+
 var (
 	startTime = time.Now()
 	config    Configuration
@@ -65,7 +67,7 @@ func main() {
 
 	printInfo("Starting to poll feeds.")
 	for _, feed := range config.Feeds {
-		go pollFeed(feed.FeedUrl, feed.Timeout, feed.ChannelID)
+		go pollFeed(feed.FeedUrl, feed.Timeout, feed.ChannelId)
 	}
 
 	m := new(runtime.MemStats)
@@ -79,9 +81,6 @@ func main() {
 		sig := <-sigchan
 		printInfo(fmt.Sprintf("Recieved signal:%v.", sig))
 		printInfo("Cleaning up...")
-		if err = session.Logout(); err != nil {
-			printError(fmt.Sprintf("Error logging out: %v", err))
-		}
 		if err = session.Close(); err != nil {
 			printError(fmt.Sprintf("Error cose connection: %v", err))
 		}
