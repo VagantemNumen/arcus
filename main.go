@@ -57,7 +57,11 @@ func main() {
 
 	session.AddHandler(messageUpdate)
 
-	session.Open()
+  if err = session.Open(); err != nil {
+    printError(fmt.Sprintf("Error opening discordgo session: %v", err))
+		sigchan <- syscall.SIGINT
+  }
+
 
 	err = getClient()
 	if err != nil {
